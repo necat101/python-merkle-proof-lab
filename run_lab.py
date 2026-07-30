@@ -33,9 +33,6 @@ for cid, leaves, idx, op, v_override, exp_class in CASES:
             actual_class='success' if ok else 'root_mismatch'
         elif op=='build_root':
             root=build_root(leaves); actual_root=root.hex(); actual_class='success'
-        elif op=='build_root_nonbytes':
-            try: root=build_root([b'a', "a"]); actual_class='success'
-            except Exception as e: actual_class=classify_exc(e); exc_type=type(e).__name__
         elif op=='build_proof':
             proof=build_proof(leaves, idx); actual_class='success'
         elif op.startswith('verify'):

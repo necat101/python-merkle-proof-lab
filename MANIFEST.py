@@ -15,7 +15,7 @@ CASES = [
 ('c12', [b"\xc3\xa9\xf0\x9f\x90\xb1"], 0, 'proof', None, 'success'),
 # error cases
 ('c13', [], 0, 'build_root', None, 'empty_tree'),
-('c14', "BAD_NON_BYTES", 0, 'build_root_nonbytes', None, 'invalid_leaf'),
+('c14', [b'a', "a"], 0, 'build_root', None, 'invalid_leaf'),
 ('c15', [b"a", b"b"], -1, 'build_proof', None, 'index_out_of_range'),
 ('c16', [b"a", b"b"], 2, 'build_proof', None, 'index_out_of_range'),
 ('c17', [b"a", b"b"], 0, 'verify_tamper_leaf', b"A", 'root_mismatch'),

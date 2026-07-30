@@ -125,16 +125,34 @@ class TestMerkle(unittest.TestCase):
         self.assertEqual(leaves, orig)
         p=build_proof(leaves,0)
         root=build_root(leaves)
+        # snapshot proof state
+        p_index = p.leaf_index; p_count = p.leaf_count; p_steps = p.steps
+        step0_sib = p_steps[0].sibling if p_steps else None
+        # verify must not mutate any caller-owned objects
         verify_proof(b'a',0,2,p,root)
-        self.assertEqual(p.leaf_index,0)
+        self.assertEqual(p.leaf_index, p_index)
+        self.assertEqual(p.leaf_count, p_count)
+        self.assertIs(p.steps, p_steps)  # tuple identity unchanged
+        if p_steps:
+            self.assertIs(p.steps[0].sibling, step0_sib)
+        # frozen dataclasses – mutation attempts raise
+        with self.assertRaises(Exception):
+            p.leaf_index = 1  # type: ignore
+        if p_steps:
+            with self.assertRaises(Exception):
+                p.steps[0].sibling = b'\x00'*32  # type: ignore
     def test_reject_non_bytes(self):
         with self.assertRaises(InvalidLeafError): build_root([b'a','a'])
         with self.assertRaises(InvalidLeafError): build_root([bytearray(b'a')])
+        with self.assertRaises(InvalidLeafError): build_root([memoryview(b'a')])
         with self.assertRaises(InvalidLeafError): leaf_hash("a")  # type: ignore
     def test_bool_not_int(self):
         leaves=[b'a',b'b']
+        # build_proof rejects bool index before range check
         with self.assertRaises(IndexOutOfRangeError): build_proof(leaves, True)  # type: ignore
         p=build_proof(leaves,0); root=build_root(leaves)
-        with self.assertRaises((IndexOutOfRangeError, InvalidMetadataError)): verify_proof(b'a', True, 2, p, root)  # type: ignore
+        # verify_proof: proof.leaf_index (0) != index (True==1) → InvalidMetadataError,
+        # and this check occurs before request index type validation per documented precedence
+        with self.assertRaises(InvalidMetadataError): verify_proof(b'a', True, 2, p, root)  # type: ignore
 
 if __name__=='__main__': unittest.main()

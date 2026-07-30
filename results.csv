@@ -12,7 +12,7 @@ c10,success,"[""""]",0,8855508aade16ec573d21e6a485dfd0a7624085c1a14b5ecdd6485de0
 c11,success,"[""0000666f6f"",""626172""]",0,0c7597a5ee8a570cd5069411b600906d9ee9b36c71c8008d8845596e22e79de1,0c7597a5ee8a570cd5069411b600906d9ee9b36c71c8008d8845596e22e79de1,"[[""428705ba01474e64bc0ef59d5b628121044185cbc05ebdd94f3ee8dad889a722"",""right""]]","[[""428705ba01474e64bc0ef59d5b628121044185cbc05ebdd94f3ee8dad889a722"",""right""]]",success,success,True,,,True
 c12,success,"[""c3a9f09f90b1""]",0,baeb41f408621f59a70b9668770a77c2a472cbde51f57cefc6cac46a42edef4c,baeb41f408621f59a70b9668770a77c2a472cbde51f57cefc6cac46a42edef4c,[],[],success,success,True,,,True
 c13,empty_tree,[],,,,,,empty_tree,empty_tree,,EmptyTreeError,,True
-c14,invalid_leaf,malformed:non_bytes,,,,,,invalid_leaf,invalid_leaf,,InvalidLeafError,,True
+c14,invalid_leaf,malformed:list,,,,,,invalid_leaf,invalid_leaf,,InvalidLeafError,,True
 c15,index_out_of_range,"[""61"",""62""]",-1,,,,,index_out_of_range,index_out_of_range,,IndexOutOfRangeError,,True
 c16,index_out_of_range,"[""61"",""62""]",2,,,,,index_out_of_range,index_out_of_range,,IndexOutOfRangeError,,True
 c17,root_mismatch,"[""61"",""62""]",0,,,,,root_mismatch,root_mismatch,False,,,True
