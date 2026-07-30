@@ -1,0 +1,46 @@
+# Deterministic manifest
+CASES = [
+# id, leaves, idx, op, verify_override, expected_class
+('c01', [b"a"], 0, 'proof', None, 'success'),
+('c02', [b"a", b"b"], 0, 'proof', None, 'success'),
+('c03', [b"a", b"b"], 1, 'proof', None, 'success'),
+('c04', [b"a", b"b", b"c"], 2, 'proof', None, 'success'),
+('c05', [b"a", b"b", b"c", b"d"], 1, 'proof', None, 'success'),
+('c06', [b"a", b"b", b"c", b"d", b"e"], 4, 'proof', None, 'success'),
+('c07', [b"b", b"a"], 0, 'proof', None, 'success'),
+('c08', [b"x", b"y", b"x"], 0, 'proof', None, 'success'),
+('c09', [b"x", b"y", b"x"], 2, 'proof', None, 'success'),
+('c10', [b""], 0, 'proof', None, 'success'),
+('c11', [b"\x00\x00foo", b"bar"], 0, 'proof', None, 'success'),
+('c12', [b"\xc3\xa9\xf0\x9f\x90\xb1"], 0, 'proof', None, 'success'),
+# error cases
+('c13', [], 0, 'build_root', None, 'empty_tree'),
+('c14', "BAD_NON_BYTES", 0, 'build_root_nonbytes', None, 'invalid_leaf'),
+('c15', [b"a", b"b"], -1, 'build_proof', None, 'index_out_of_range'),
+('c16', [b"a", b"b"], 2, 'build_proof', None, 'index_out_of_range'),
+('c17', [b"a", b"b"], 0, 'verify_tamper_leaf', b"A", 'root_mismatch'),
+('c18', [b"a", b"b"], 0, 'verify_tamper_sibling', None, 'root_mismatch'),
+('c19', [b"a", b"b"], 0, 'verify_flip_side', None, 'root_mismatch'),
+('c20', [b"a", b"b"], 0, 'verify_tamper_root', None, 'root_mismatch'),
+('c21', [b"a", b"b"], 0, 'verify_bad_digest_len', None, 'invalid_digest'),
+('c22', [b"a", b"b"], 0, 'verify_bad_side', None, 'invalid_side'),
+('c23', [b"a", b"b"], 0, 'verify_meta_index', None, 'invalid_metadata'),
+('c24', [b"a", b"b"], 0, 'verify_meta_count', None, 'invalid_metadata'),
+('c25', [b"a", b"b", b"c", b"d"], 0, 'verify_missing_step', None, 'proof_length_mismatch'),
+('c26', [b"a", b"b"], 0, 'verify_extra_step', None, 'proof_length_mismatch'),
+]
+
+EXPECTED = {
+'c01': {'root':'5ce0c36729575ed8f79033158ff52da7f125edf52c79186fd033eaa02475b42d','steps':[]},
+'c02': {'root':'c91d808466c298187df3c71e1700099cbc8e207fcf419377989a56cbf467fda6','steps':[('4af98d9d0ff04fc04743c5adf4959bb5eccf493fafed5b4e90b921627325b318','right')]},
+'c03': {'root':'c91d808466c298187df3c71e1700099cbc8e207fcf419377989a56cbf467fda6','steps':[('5ce0c36729575ed8f79033158ff52da7f125edf52c79186fd033eaa02475b42d','left')]},
+'c04': {'root':'17709435ac974a91e14c30a6e39e4cf74cbf7bf5df6e49d77ced8a39159a5c9c','steps':[('aa8d78cb634e081b23513c9163b6f5003062f156f742a36eaa7934f931beb22e','right'),('c91d808466c298187df3c71e1700099cbc8e207fcf419377989a56cbf467fda6','left')]},
+'c05': {'root':'004b7b719bdb2e0a807314e3e0feda3d35104dc788d6939b1d58c8d44455d9c3','steps':[('5ce0c36729575ed8f79033158ff52da7f125edf52c79186fd033eaa02475b42d','left'),('3d1f97ddb23fa3e05de46a6754503a355ab868806f812d3c2eb9e547e8ae1334','right')]},
+'c06': {'root':'f4e91f117583cbdd45cd6d9b3f6951bc23a7a7ff316a35ce762e95c77e255006','steps':[('f2548acfbf4d37b342afecad187892568e1703f088e995bb87630e9bd701ec31','right'),('390d30f0e65b9dce24512bc7a477ab409a97817364e35f12d34ccda8994a240e','right'),('004b7b719bdb2e0a807314e3e0feda3d35104dc788d6939b1d58c8d44455d9c3','left')]},
+'c07': {'root':'ea370eb224028d6fa3b98f55ca674db35c23d9a61004f5774bd3c1741247857b','steps':[('5ce0c36729575ed8f79033158ff52da7f125edf52c79186fd033eaa02475b42d','right')]},
+'c08': {'root':'6a28c031e302da7806cc9905f1697e8abbcfba8c3e4477190f2be4e5f86233b8','steps':[('dbef5d7960f97614ad7164b98b1790645bf2cf2f0fcdbaf38f2d2749369d6310','right'),('0bea808e674960173fb995573d378ef49e8955db5dc0d8cae4ab81232063df9e','right')]},
+'c09': {'root':'6a28c031e302da7806cc9905f1697e8abbcfba8c3e4477190f2be4e5f86233b8','steps':[('2474db85d6031d26cb9a5e99fe5b33320c184bbbda1c1f7e30f9d8d929d23414','right'),('caacab94023a51ee9fd2d5e93afe6fb9fab0fd4acbac4085007b583ec05f4633','left')]},
+'c10': {'root':'8855508aade16ec573d21e6a485dfd0a7624085c1a14b5ecdd6485de0c6839a4','steps':[]},
+'c11': {'root':'0c7597a5ee8a570cd5069411b600906d9ee9b36c71c8008d8845596e22e79de1','steps':[('428705ba01474e64bc0ef59d5b628121044185cbc05ebdd94f3ee8dad889a722','right')]},
+'c12': {'root':'baeb41f408621f59a70b9668770a77c2a472cbde51f57cefc6cac46a42edef4c','steps':[]},
+}
